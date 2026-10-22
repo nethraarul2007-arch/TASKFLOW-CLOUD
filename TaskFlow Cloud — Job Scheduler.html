@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://localhost:3001/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101522">
+  <title>TaskFlow Cloud — Job Scheduler</title>
+  <link rel="stylesheet" href="./TaskFlow Cloud — Job Scheduler_files/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">T</div><div><strong>TaskFlow</strong><span>CLOUD CONTROL</span></div></div>
+      <div class="workspace-label">WORKSPACE</div>
+      <nav>
+        <a class="nav-link active" href="http://localhost:3001/#overview"><span>◫</span> Overview</a>
+        <a class="nav-link" href="http://localhost:3001/#tasks"><span>☷</span> Task queue <b id="nav-queued">0</b></a>
+        <a class="nav-link" href="http://localhost:3001/#workers"><span>⌘</span> Workers</a>
+        <a class="nav-link" href="http://localhost:3001/#failures"><span>⚠</span> Failure logs</a>
+        <a class="nav-link" href="http://localhost:3001/#deadletters"><span>↳</span> Dead-letter queue</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="system-status"><span class="pulse"></span><div><strong>System operational</strong><small id="uptime">API online · 150s session</small></div></div>
+        <div class="profile"><div class="avatar">TF</div><div><strong>TaskFlow Admin</strong><small>Local environment</small></div><span class="dots">•••</span></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><div class="eyebrow">CONTROL CENTER / OVERVIEW</div><h1>Job scheduler</h1><p>Monitor queues, workers, and execution health in real time.</p></div>
+        <div class="top-actions"><span class="live-pill"><i></i> LIVE UPDATES</span><button class="btn btn-ghost" id="pause-btn" data-paused="false">Ⅱ Pause queue</button><button class="btn btn-primary" id="new-task-btn">＋ New task</button></div>
+      </header>
+
+      <section class="metrics" id="overview">
+        <article class="metric-card"><div class="metric-top"><span>Total tasks</span><span class="metric-icon violet">▤</span></div><div class="metric-value" id="stat-total">2</div><div class="metric-foot"><span class="subtle">All jobs in this session</span><span class="trend">↗</span></div></article>
+        <article class="metric-card"><div class="metric-top"><span>Queued</span><span class="metric-icon amber">◷</span></div><div class="metric-value" id="stat-queued">0</div><div class="metric-foot"><span class="subtle">Waiting for a worker</span><span class="mini-bar amber-bar"></span></div></article>
+        <article class="metric-card"><div class="metric-top"><span>Running</span><span class="metric-icon blue">↻</span></div><div class="metric-value" id="stat-running">0</div><div class="metric-foot"><span class="subtle">Currently processing</span><span class="mini-bar blue-bar"></span></div></article>
+        <article class="metric-card"><div class="metric-top"><span>Completed</span><span class="metric-icon green">✓</span></div><div class="metric-value" id="stat-completed">2</div><div class="metric-foot"><span class="subtle">Successfully processed</span><span class="trend green-text">↗</span></div></article>
+        <article class="metric-card"><div class="metric-top"><span>Dead letters</span><span class="metric-icon red">!</span></div><div class="metric-value" id="stat-failed">0</div><div class="metric-foot"><span class="subtle">Exhausted retry attempts</span><span class="subtle" id="failure-rate">0 failed</span></div></article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel queue-panel" id="tasks">
+          <div class="panel-heading"><div><h2>Task queue</h2><p>Priority-ranked work and execution state</p></div><div class="heading-actions"><select id="status-filter" aria-label="Filter task status"><option value="all">All statuses</option><option value="queued">Queued</option><option value="running">Running</option><option value="completed">Completed</option><option value="failed">Failed</option></select><button class="btn btn-small btn-ghost" id="demo-btn">▶ Load demo</button></div></div>
+          <div class="table-wrap"><table><thead><tr><th>TASK</th><th>PRIORITY</th><th>STATUS</th><th>ATTEMPTS</th><th>WORKER</th><th>CREATED</th></tr></thead><tbody id="task-rows">
+    <tr>
+      <td><div class="task-title" title="MONTHLY SALES REPORT">MONTHLY SALES REPORT</div><div class="task-id">#f05afcde</div></td>
+      <td><span class="priority priority-high">high</span></td>
+      <td><span class="status status-completed">completed</span></td>
+      <td class="attempts">2/3</td>
+      <td class="worker-tag">W-1</td>
+      <td>35s ago</td>
+    </tr>
+    <tr>
+      <td><div class="task-title" title="PROCESS CUSTOMER INVOICES">PROCESS CUSTOMER INVOICES</div><div class="task-id">#32b1dbaf</div></td>
+      <td><span class="priority priority-normal">normal</span></td>
+      <td><span class="status status-completed">completed</span></td>
+      <td class="attempts">1/3</td>
+      <td class="worker-tag">W-1</td>
+      <td>1m ago</td>
+    </tr></tbody></table></div>
+          <div class="panel-footer"><span id="task-count">Showing 2 tasks</span><span>Priority scheduling: critical → low</span></div>
+        </article>
+
+        <article class="panel workers-panel" id="workers">
+          <div class="panel-heading"><div><h2>Worker pool</h2><p>Background execution nodes</p></div><span class="count-pill" id="worker-count">3 workers</span></div>
+          <div class="worker-list" id="worker-list"><div class="worker-card">
+      <div class="worker-icon">⌘</div>
+      <div class="worker-info"><strong>Worker 1</strong><small>Waiting for next task</small></div>
+      <span class="worker-state state-idle">idle</span>
+    </div><div class="worker-card">
+      <div class="worker-icon">⌘</div>
+      <div class="worker-info"><strong>Worker 2</strong><small>Waiting for next task</small></div>
+      <span class="worker-state state-idle">idle</span>
+    </div><div class="worker-card">
+      <div class="worker-icon">⌘</div>
+      <div class="worker-info"><strong>Worker 3</strong><small>Waiting for next task</small></div>
+      <span class="worker-state state-idle">idle</span>
+    </div></div>
+          <div class="worker-summary"><div><span class="summary-dot busy"></span>Busy <b id="busy-count">0</b></div><div><span class="summary-dot idle"></span>Idle <b id="idle-count">3</b></div></div>
+        </article>
+      </section>
+
+      <section class="bottom-grid">
+        <article class="panel" id="failures"><div class="panel-heading"><div><h2>Failure logs</h2><p>Recent execution errors and retry activity</p></div><span class="count-pill" id="failure-count">1 events</span></div><div class="log-list" id="failure-list">
+    <div class="log-item"><div class="log-icon">!</div><div class="log-content"><strong>MONTHLY SALES REPORT · attempt 1</strong><p>Simulated failure (fail-first demo flag). · worker-1</p></div><span class="log-time">04:32 pm</span></div></div></article>
+        <article class="panel" id="deadletters"><div class="panel-heading"><div><h2>Dead-letter queue</h2><p>Jobs that reached their retry limit</p></div><span class="count-pill danger-count" id="dlq-count">0 jobs</span></div><div class="dead-list" id="dead-list"><div class="empty">Dead-letter queue is empty. Exhausted jobs will appear here.</div></div></article>
+      </section>
+      <footer><span>TaskFlow Cloud <b>v1.0.0</b></span><span>Node.js built-in modules · Local demo environment</span></footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="task-modal" hidden="">
+    <form class="modal" id="task-form">
+      <div class="modal-head"><div><span class="eyebrow">QUEUE MANAGEMENT</span><h2>Create a new task</h2></div><button type="button" class="close-btn" id="close-modal" aria-label="Close">×</button></div>
+      <label>Task name<input name="title" required="" maxlength="120" placeholder="e.g. Process customer invoices"></label>
+      <div class="form-row"><label>Priority<select name="priority"><option value="normal">Normal</option><option value="critical">Critical</option><option value="high">High</option><option value="low">Low</option></select></label><label>Duration<select name="durationMs"><option value="700">Fast · 0.7 sec</option><option value="1500" selected="">Standard · 1.5 sec</option><option value="3000">Long · 3 sec</option><option value="5000">Heavy · 5 sec</option></select></label></div>
+      <label>Payload note<input name="payloadNote" placeholder="Optional task context"></label>
+      <label class="check-label"><input type="checkbox" name="failFirst"> Simulate one failure (demonstrates automatic retry)</label>
+      <div class="modal-actions"><button type="button" class="btn btn-ghost" id="cancel-modal">Cancel</button><button class="btn btn-primary" type="submit">Add to queue <span>→</span></button></div>
+      <p class="form-hint">Tasks are processed by local background workers. Data is held in memory and resets when the server restarts.</p>
+    </form>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite">Task added to the queue.</div>
+  <script src="./TaskFlow Cloud — Job Scheduler_files/app.js.download"></script>
+
+
+</body></html>
